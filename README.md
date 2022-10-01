@@ -5,7 +5,7 @@ Remove trailing whitespace from code and other plain-text files.
 ## Usage
 
 ```bash
-pip install git+https://github.com/OlleLindgren/rmspace.git
+pip install rmspace
 
 # Remove trailing whitespace.
 python -m rmspace ./rmspace/rmspace/main.py
