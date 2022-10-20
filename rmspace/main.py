@@ -27,9 +27,7 @@ def _parse_args(args: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("paths", nargs="+", help="Paths to format", type=Path)
 
-    parser.add_argument(
-        "--check", action="store_true", help="Return 1 if any file was formatted."
-    )
+    parser.add_argument("--check", action="store_true", help="Return 1 if any file was formatted.")
 
     return parser.parse_args(args)
 
@@ -105,6 +103,7 @@ def main(args: Sequence[str]) -> int:
         int: 1 if --check, and any file was formatted, otherwise 0.
 
     """
+    args = [str(arg) for arg in args]  # To support calling with Path object list
     args = _parse_args(args)
 
     file_formatting_count = 0
@@ -125,4 +124,4 @@ def main(args: Sequence[str]) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main.main(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:]))
