@@ -24,12 +24,12 @@ def _parse_args(args: Sequence[str]) -> argparse.Namespace:
         argparse.Namespace: Parsed arguments.
 
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("paths", nargs="+", help="Paths to format", type=Path)
+    _PARSER = argparse.ArgumentParser()
+    _PARSER.add_argument("paths", nargs="+", help="Paths to format", type=Path)
 
-    parser.add_argument("--check", action="store_true", help="Return 1 if any file was formatted.")
+    _PARSER.add_argument("--check", action="store_true", help="Return 1 if any file was formatted.")
 
-    return parser.parse_args(args)
+    return _PARSER.parse_args(args)
 
 
 def _is_text_encoded(filename: Path) -> bool:
@@ -69,6 +69,12 @@ def _iter_files(paths: Iterable[Path]) -> Iterable[Path]:
             raise FileNotFoundError(f"Not found: {path}")
 
 
+def format_str(content: str, pattern: str = _WHITESPACE_RE_PATTERN) -> str:
+    if isinstance(pattern, str):
+        pattern = re.compile(pattern)
+    return pattern.sub("", content)
+
+
 def format_file(filename: Path, *, pattern: str = _WHITESPACE_RE_PATTERN) -> bool:
     """Format a file.
 
@@ -80,13 +86,16 @@ def format_file(filename: Path, *, pattern: str = _WHITESPACE_RE_PATTERN) -> boo
         bool: True if the file was formatted.
 
     """
+    if isinstance(pattern, str):
+        pattern = re.compile(pattern)
+
     with open(filename, "r") as stream:
         content = stream.read()
 
     if not pattern.search(content):
         return False
 
-    formatted_content = pattern.sub("", content)
+    formatted_content = format_str(content, pattern)
     with open(filename, "w") as stream:
         stream.write(formatted_content)
 
